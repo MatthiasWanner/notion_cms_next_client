@@ -6,7 +6,7 @@ import type {
 } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { getHomepageContent } from '../src/api/fetchers/notion';
+import { getHomepageContent } from '../src/api/notion/fetchers';
 import styles from '../styles/Home.module.css';
 
 interface IProps {
@@ -42,6 +42,7 @@ const Home: NextPage<IProps> = ({
             />
           ))}
         </header>
+        <section>{}</section>
       </main>
 
       <footer className={styles.footer}>

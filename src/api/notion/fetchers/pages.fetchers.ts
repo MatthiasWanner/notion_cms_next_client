@@ -1,10 +1,15 @@
+import { isFullBlock } from '@notionhq/client';
 import {
   BlockObjectResponse,
   ImageBlockObjectResponse
 } from '@notionhq/client/build/src/api-endpoints';
-import { pagesProperties, pagesTypes } from '../../constants/notion.constants';
-import { notion } from '../../notion.client';
-import { extractPagePropertyValue, getImageBlockUrl } from '../../utils/notion';
+import { pagesProperties, pagesTypes } from '../constants';
+import { notion } from '../client';
+import {
+  extractPagePropertyValue,
+  getBlockContent,
+  getImageBlockUrl
+} from '../utils';
 
 const pagesDatabaseId = process.env.NOTION_PAGES_DATABASE_ID ?? '';
 
@@ -52,7 +57,15 @@ export const getHomepageContent = async () => {
       homepageBlocks as BlockObjectResponse[]
     );
 
-    return { pageTitle: homepageTitle, carouselPictures };
+    const homepageContent = homepageBlocks
+      .filter((b) => isFullBlock(b) && b.type !== 'callout')
+      .map((block) => getBlockContent(block));
+
+    return {
+      pageTitle: homepageTitle,
+      carouselPictures,
+      content: homepageContent
+    };
   } catch {
     return null;
   }
