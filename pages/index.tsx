@@ -14,9 +14,11 @@ interface IProps {
     blockId: string;
     pictureUrl: string;
   }[];
+  pageTitle: string;
 }
 
 const Home: NextPage<IProps> = ({
+  pageTitle,
   carouselPictures
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
@@ -28,7 +30,7 @@ const Home: NextPage<IProps> = ({
       </Head>
 
       <main className={styles.main}>
-        <h1>{'Hey'}</h1>
+        <h1>{pageTitle}</h1>
         <header>
           {carouselPictures.map((image) => (
             <Image

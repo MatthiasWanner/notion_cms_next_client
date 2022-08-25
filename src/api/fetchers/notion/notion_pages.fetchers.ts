@@ -4,7 +4,7 @@ import {
 } from '@notionhq/client/build/src/api-endpoints';
 import { pagesProperties, pagesTypes } from '../../constants/notion.constants';
 import { notion } from '../../notion.client';
-import { getImageBlockUrl } from '../../utils/notion';
+import { extractPagePropertyValue, getImageBlockUrl } from '../../utils/notion';
 
 const pagesDatabaseId = process.env.NOTION_PAGES_DATABASE_ID ?? '';
 
@@ -35,15 +35,24 @@ const getHomepageId = async () => {
 
 export const getHomepageContent = async () => {
   try {
+    const homepageId = (await getHomepageId()) ?? '';
+
+    const homepageTitle = extractPagePropertyValue(
+      await notion.pages.properties.retrieve({
+        page_id: homepageId,
+        property_id: 'title'
+      })
+    );
+
     const { results: homepageBlocks } = await notion.blocks.children.list({
-      block_id: (await getHomepageId()) ?? ''
+      block_id: homepageId
     });
 
     const carouselPictures = await getCarouselPictures(
       homepageBlocks as BlockObjectResponse[]
     );
 
-    return { carouselPictures };
+    return { pageTitle: homepageTitle, carouselPictures };
   } catch {
     return null;
   }
